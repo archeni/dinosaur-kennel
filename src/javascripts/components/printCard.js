@@ -53,10 +53,52 @@ const addDinoFunc = () => {
   dino.dinos.push(testDino);
 };
 
+const feedEvents = () => {
+  const feedButton = document.getElementsByClassName('feed-button');
+  for (let j = 0; j < feedButton.length; j += 1) {
+    feedButton[j].addEventListener('click', (event2) => {
+      const mainDinoCard = event2.target.parentNode.parentNode.id;
+      if (mainDinoCard === dino.dinos[j].id) {
+        if (dino.dinos[j].health <= 100) {
+          dino.dinos[j].health += Math.floor((Math.random() * 100));
+          if (dino.dinos[j].health > 100) {
+            dino.dinos[j].health = 100;
+            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
+          } else {
+            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
+          }
+        }
+      }
+    });
+  }
+};
+const advEvents = () => {
+  const advButton = document.getElementsByClassName('adv-button');
+  for (let j = 0; j < advButton.length; j += 1) {
+    advButton[j].addEventListener('click', (event2) => {
+      const mainDinoCard = event2.target.parentNode.parentNode.id;
+      if (mainDinoCard === dino.dinos[j].id) {
+        if (dino.dinos[j].health >= 0) {
+          dino.dinos[j].health -= Math.floor((Math.random() * 100));
+          if (dino.dinos[j].health < 0) {
+            dino.dinos[j].health = 0;
+            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
+          } else {
+            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
+          }
+        }
+      }
+    });
+  }
+};
+
+
 const submitFunc = () => {
   submitButton.addEventListener('click', () => {
     addDinoFunc();
     cardPrinter();
+    feedEvents();
+    advEvents();
   });
 };
 
