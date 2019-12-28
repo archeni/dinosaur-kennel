@@ -3,7 +3,7 @@ import dino from './dinos';
 
 const idMaker = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
-const healthMaker = () => `_${Math.floor((Math.random() * 100))}`;
+const healthMaker = () => Math.floor((Math.random() * 100));
 
 function DinoObj(age, name, picture, location, color, type) {
   this.id = idMaker();
@@ -24,9 +24,10 @@ const cardPrinter = () => {
       <div class="card-body">
         <h5 class="card-title">${dino.dinos[i].name}</h5>
         <small class="form-text">${dino.dinos[i].type}</small>
-        <p>The dinosaur is in the ${dino.dinos[i].location} with a health of ${dino.dinos[i].health}</p>
-        <button id="${dino.dinos[i].id}-b" type="button" class="btn btn-danger attempt-button">Attempt at a fish</button>
-        <button id="${dino.dinos[i].id}-c" type="button" class="btn btn-success success-button">Successful catch</button>
+        <p>The dinosaur is in the ${dino.dinos[i].location} with a health of
+        <p><progress value="${dino.dinos[i].health}" max="100" id="${dino.dinos[i].id}-h"></progress></p></p>
+        <button id="${dino.dinos[i].id}-f" type="button" class="btn btn-primary feed-button">Feed Dino</button>
+        <button id="${dino.dinos[i].id}-a" type="button" class="btn btn-warning adv-button">Send dino on an adventure</button>
     </div>`;
   }
   print.printToDom('cardsHere', stringDom);
