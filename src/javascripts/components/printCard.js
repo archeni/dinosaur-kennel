@@ -5,12 +5,25 @@ const idMaker = () => `_${Math.random().toString(36).substr(2, 9)}`;
 
 const healthMaker = () => Math.floor((Math.random() * 100));
 
-function DinoObj(age, name, picture, location, color, type) {
+const locationDecider = () => {
+  let mainLocation = '';
+  if (document.getElementById('inputMainKennel').checked) {
+    mainLocation = 'Main Kennel';
+  } if (document.getElementById('inputHospital').checked) {
+    mainLocation = 'Hospital';
+  }
+  if (document.getElementById('inputGraveyard').checked) {
+    mainLocation = 'Graveyard';
+  }
+  return mainLocation;
+};
+
+function DinoObj(age, name, picture, color, type) {
   this.id = idMaker();
   this.age = age;
   this.name = name;
   this.picture = picture;
-  this.location = location;
+  this.location = locationDecider();
   this.color = color;
   this.type = type;
   this.health = healthMaker();
@@ -21,7 +34,10 @@ const cardPrinter = () => {
   for (let i = 0; i < dino.dinos.length; i += 1) {
     stringDom += `
     <div id="${dino.dinos[i].id}" class="card container" style="width: 25rem;">
-      <img src="${dino.dinos[i].picture}" class="card-img-top" alt="location" style="width: 23rem; height: 18rem">
+      <div id="${dino.dinos[i].id}-reprint">
+        <img src="https://cdn.shopify.com/s/files/1/1242/0796/products/54495_1024x1024.jpeg?v=1571441044" id='${dino.dinos[i].id}-p' class="overlay" alt="skull">
+        <img src="${dino.dinos[i].picture}" class="card-img-top" alt="location" style="width: 23rem; height: 18rem">
+      </div>
       <div class="card-body">
         <h5 class="card-title">${dino.dinos[i].name}</h5>
         <small class="form-text">${dino.dinos[i].type}</small>
@@ -38,7 +54,6 @@ const cardPrinter = () => {
   document.getElementById('inputName').value = '';
   document.getElementById('inputAge').value = '';
   document.getElementById('inputPic').value = '';
-  document.getElementById('inputLocation').value = '';
   document.getElementById('inputType').value = '';
   document.getElementById('inputColor').value = '';
 };
@@ -49,10 +64,9 @@ const addDinoFunc = () => {
   const newName = document.getElementById('inputName').value;
   const newColor = document.getElementById('inputColor').value;
   const newAge = document.getElementById('inputAge').value;
-  const newLocation = document.getElementById('inputLocation').value;
   const newType = document.getElementById('inputType').value;
   const newPic = document.getElementById('inputPic').value;
-  const testDino = new DinoObj(newAge, newName, newPic, newLocation, newColor, newType);
+  const testDino = new DinoObj(newAge, newName, newPic, newColor, newType);
   dino.dinos.push(testDino);
 };
 
@@ -65,27 +79,27 @@ const feedEvents = () => {
       if (mainDinoCard === dino.dinos[j].id) {
         if (dino.dinos[j].health <= 100) {
           dino.dinos[j].health += Math.floor((Math.random() * 100));
-          if (dino.dinos[j].health > 100) {
+          if (dino.dinos[j].health >= 100) {
             dino.dinos[j].health = 100;
-            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
-          } else {
-            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
-          }
-          if (dino.dinos[j].health < 40 && dino.dinos[j].health > 0) {
-            dino.dinos[j].location = 'hospital';
+            dino.dinos[j].location = 'Main Kennel';
+            stringDom2 = `The dinosaur is in the ${dino.dinos[j].location} with a health of`;
+            print.printToDom(`${dino.dinos[j].id}-l`, stringDom2);
+          } else if (dino.dinos[j].health < 40 && dino.dinos[j].health > 0) {
+            dino.dinos[j].location = 'Hospital';
             stringDom2 = `The dinosaur is in the ${dino.dinos[j].location} with a health of`;
             print.printToDom(`${dino.dinos[j].id}-l`, stringDom2);
           } else if (dino.dinos[j].health === 0) {
-            dino.dinos[j].location = 'graveyard';
+            dino.dinos[j].location = 'Graveyard';
             stringDom2 = `The dinosaur is in the ${dino.dinos[j].location} with a health of`;
             print.printToDom(`${dino.dinos[j].id}-l`, stringDom2);
             document.getElementById(`${dino.dinos[j].id}-f`).className = 'btn btn-primary disabled';
             document.getElementById(`${dino.dinos[j].id}-a`).className = 'btn btn-primary disabled';
           } else {
-            dino.dinos[j].location = 'main kennel';
+            dino.dinos[j].location = 'Main Kennel';
             stringDom2 = `The dinosaur is in the ${dino.dinos[j].location} with a health of`;
             print.printToDom(`${dino.dinos[j].id}-l`, stringDom2);
           }
+          document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
         }
       }
     });
@@ -113,34 +127,28 @@ const advEvents = () => {
       if (mainDinoCard === dino.dinos[j].id) {
         if (dino.dinos[j].health >= 0) {
           dino.dinos[j].health -= Math.floor((Math.random() * 100));
-          if (dino.dinos[j].health < 0) {
+          if (dino.dinos[j].health <= 0) {
             dino.dinos[j].health = 0;
-            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
-          } else {
-            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
-          }
-          if (dino.dinos[j].health < 40 && dino.dinos[j].health > 0) {
-            dino.dinos[j].location = 'hospital';
+            dino.dinos[j].location = 'Graveyard';
             stringDom2 = `The dinosaur is in the ${dino.dinos[j].location} with a health of`;
             print.printToDom(`${dino.dinos[j].id}-l`, stringDom2);
-          } else if (dino.dinos[j].health === 0) {
-            dino.dinos[j].location = 'graveyard';
-            stringDom2 = `
-            <img src="${dino.dinos[j].picture}" class="card-img-top" alt="location" style="width: 23rem; height: 18rem">
-            <div class="card-body">
-              <h5 class="card-title">${dino.dinos[j].name}</h5>
-              <small class="form-text">${dino.dinos[j].type}</small>
-              <p id='${dino.dinos[j].id}-l'>The dinosaur is in the ${dino.dinos[j].location} with a health of </p>
-              <p><progress value="${dino.dinos[j].health}" max="100" id="${dino.dinos[j].id}-h"></progress></p>
-              <button id="${dino.dinos[j].id}-f" type="button" class="btn btn-primary disabled">Feed Dino</button>
-              <button id="${dino.dinos[j].id}-a" type="button" class="btn btn-warning disabled">Send dino on an adventure</button>;
-            `;
-            print.printToDom(`${dino.dinos[j].id}`, stringDom2);
+            document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
+            document.getElementById(`${dino.dinos[j].id}-f`).disabled = true;
+            document.getElementById(`${dino.dinos[j].id}-a`).disabled = true;
+            document.getElementById(`${dino.dinos[j].id}-e`).disabled = true;
+            document.getElementById(`${dino.dinos[j].id}-p`).style.display = 'inline';
+            const Reprint = document.getElementById(`${dino.dinos[j].id}-reprint`);
+            print.printToDom(Reprint, `${dino.dinos[j].id}-p`);
+          } else if (dino.dinos[j].health < 40 && dino.dinos[j].health > 0) {
+            dino.dinos[j].location = 'Hospital';
+            stringDom2 = `The dinosaur is in the ${dino.dinos[j].location} with a health of`;
+            print.printToDom(`${dino.dinos[j].id}-l`, stringDom2);
           } else {
-            dino.dinos[j].location = 'main kennel';
+            dino.dinos[j].location = 'Main Kennel';
             stringDom2 = `The dinosaur is in the ${dino.dinos[j].location} with a health of`;
             print.printToDom(`${dino.dinos[j].id}-l`, stringDom2);
           }
+          document.getElementById(`${dino.dinos[j].id}-h`).value = dino.dinos[j].health;
         }
       }
     });
